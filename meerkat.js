@@ -213,7 +213,7 @@ Meerkat.prototype.getBroadcastWatchers = function (broadcastId, callback) {
 Meerkat.prototype.getUserDetails = function (userId, callback) {
 
     var urlTemplate = Meerkat.RoutingMap.profile;
-    var targetUrl = urlTemplate.replace('{userId}', broadcastId);
+    var targetUrl = urlTemplate.replace('{userId}', userId);
 
     this.issueGetRequest_('USER_DETAILS', targetUrl, function (err, response, data) {
         callback.call(null, err, data);
