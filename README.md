@@ -5,7 +5,7 @@ This is a Node.js implementation of a wrapper for communicating with the
 
 ## Installation Instructions
 
-`npm install --save isabo/meerkat`
+`npm install --save meerkat-api`
 
 ## Notes
 
