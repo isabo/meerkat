@@ -15,7 +15,7 @@ This is a Node.js implementation of a wrapper for communicating with the
 ## Usage
 
 ```javascript
-var Meerkat = require('meerkat');
+var Meerkat = require('meerkat-api');
 
 // Create an instance.
 var meerkat = new Meerkat(API_TOKEN);
