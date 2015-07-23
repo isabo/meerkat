@@ -1,6 +1,9 @@
 var https = require('https');
 var url = require('url');
 
+// Detect whether we have an implementation of Promise.
+var PROMISES_IMPLEMENTED = (typeof Promise === 'function');
+
 
 /**
  * A client wrapper for the Meerkat API.
@@ -66,32 +69,34 @@ Meerkat.prototype.dispose = function () {
 /**
  * Request the list of broadcasts.
  *
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getAllBroadcasts = function (callback) {
+Meerkat.prototype.getAllBroadcasts = function (opt_callback) {
 
     var targetUrl = Meerkat.RoutingMap.liveNow;
 
-    this.issueGetRequest_('ALL_BROADCASTS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('ALL_BROADCASTS', targetUrl, opt_callback);
 };
 
 
 /**
  * Request the list of scheduled broadcasts.
  *
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getScheduledBroadcasts = function (callback) {
+Meerkat.prototype.getScheduledBroadcasts = function (opt_callback) {
 
     var targetUrl = Meerkat.RoutingMap.scheduledStreams;
 
-    this.issueGetRequest_('SCHEDULED_BROADCASTS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('SCHEDULED_BROADCASTS', targetUrl, opt_callback);
 };
 
 
@@ -99,17 +104,18 @@ Meerkat.prototype.getScheduledBroadcasts = function (callback) {
  * Request the summary for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastSummary = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastSummary = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.streamSummaryTemplate;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_SUMMARY', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_SUMMARY', targetUrl, opt_callback);
 };
 
 
@@ -117,17 +123,18 @@ Meerkat.prototype.getBroadcastSummary = function (broadcastId, callback) {
  * Request the activities for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastActivities = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastActivities = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.broadcastActivities;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_ACTIVITIES', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_ACTIVITIES', targetUrl, opt_callback);
 };
 
 
@@ -135,17 +142,18 @@ Meerkat.prototype.getBroadcastActivities = function (broadcastId, callback) {
  * Request the restreams for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastRestreams = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastRestreams = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.broadcastRestreams;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_RESTREAMS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_RESTREAMS', targetUrl, opt_callback);
 };
 
 
@@ -153,17 +161,18 @@ Meerkat.prototype.getBroadcastRestreams = function (broadcastId, callback) {
  * Request the comments for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastComments = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastComments = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.broadcastComments;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_COMMENTS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_COMMENTS', targetUrl, opt_callback);
 };
 
 
@@ -171,17 +180,18 @@ Meerkat.prototype.getBroadcastComments = function (broadcastId, callback) {
  * Request the likes for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastLikes = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastLikes = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.broadcastLikes;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_LIKES', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_LIKES', targetUrl, opt_callback);
 };
 
 
@@ -189,17 +199,18 @@ Meerkat.prototype.getBroadcastLikes = function (broadcastId, callback) {
  * Request the watchers for a specific broadcast.
  *
  * @param {string} broadcastId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getBroadcastWatchers = function (broadcastId, callback) {
+Meerkat.prototype.getBroadcastWatchers = function (broadcastId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.broadcastWatchers;
     var targetUrl = urlTemplate.replace('{broadcastId}', broadcastId);
 
-    this.issueGetRequest_('BROADCAST_WATCHERS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('BROADCAST_WATCHERS', targetUrl, opt_callback);
 };
 
 
@@ -207,17 +218,18 @@ Meerkat.prototype.getBroadcastWatchers = function (broadcastId, callback) {
  * Request the activities for a specific broadcast.
  *
  * @param {string} userId
- * @param {!function(Error, Object)} callback A function that will be called when the operation
+ * @param {!function(Error, Object)=} opt_callback A function that will be called when the operation
  *      completes.
+ * @return {undefined|!Promise<!Object,!Error>} If a callback is supplied, there is no return value.
+ *      If no callback is supplied, a promise is returned. The promise is resolved with the object
+ *      returned by the API, or is rejected with an error.
  */
-Meerkat.prototype.getUserDetails = function (userId, callback) {
+Meerkat.prototype.getUserDetails = function (userId, opt_callback) {
 
     var urlTemplate = Meerkat.RoutingMap.profile;
     var targetUrl = urlTemplate.replace('{userId}', userId);
 
-    this.issueGetRequest_('USER_DETAILS', targetUrl, function (err, response, data) {
-        callback.call(null, err, data);
-    });
+    return this.doGetRequest_('USER_DETAILS', targetUrl, opt_callback);
 };
 
 
@@ -402,6 +414,55 @@ Meerkat.prototype.parseCacheControlHeaderValue_ = function (headerValue) {
     }
 
     return parsedValues;
+};
+
+
+/**
+ * Make the request in the appropriate manner, depending on whether a callback is supplied, or a
+ * promise is required as a return value.
+ *
+ * @param {string} endpointName The name of the endpoint. Used in log messages.
+ * @param {string} targetUrl The url of the endpoint, with any variables already baked in.
+ * @param {function(Error, Object)=} callback A function that will be called when the operation
+ *      completes. If this is supplied, a promise will NOT be returned.
+ * @return {undefined|!Promise<(!Object|string),!Error>} If a callback is supplied, there is no
+ *      return value. If no callback is supplied, the return value is a promise that resolves to the
+ *      response, or is rejected with an error.
+ * @private
+ */
+Meerkat.prototype.doGetRequest_ = function (endpointName, targetUrl, callback) {
+
+    if (!callback && PROMISES_IMPLEMENTED) {
+        return this.promiseGetRequest_(endpointName, targetUrl);
+    } else {
+        if (!callback) {
+            throw new Error('Missing callback argument.' +
+                'Promises are not available on this platform, so a callback is required');
+        }
+        this.issueGetRequest_(endpointName, targetUrl, function (err, response, data) {
+            callback.call(null, err, data);
+        });
+    }
+};
+
+
+/**
+ * Wrap issueGetRequest_ in a promise.
+ *
+ * @param {string} endpointName The name of the endpoint. Used in log messages.
+ * @param {string} targetUrl The url of the endpoint, with any variables already baked in.
+ * @return {!Promise<(!Object|string),!Error>} A promise that resolves to the response, or is
+ *      rejected with an error.
+ * @private
+ */
+Meerkat.prototype.promiseGetRequest_ = function (endpointName, targetUrl) {
+
+    var self = this;
+    return new Promise(function(resolve, reject) {
+        self.issueGetRequest_(endpointName, targetUrl, function (err, response, data) {
+            !err ? resolve(data) : reject(err);
+        });
+    });
 };
 
 
